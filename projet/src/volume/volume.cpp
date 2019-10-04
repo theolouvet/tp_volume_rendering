@@ -42,6 +42,21 @@ image mip(volume const& vol)
     image im(vol.size_y(),vol.size_z());
 
     im.fill(color(1,1,0));
+    float i = 0.0f;
+    for(int ky = 0; ky < vol.size_y() ; ++ky){
+        for(int kz = 0; kz < vol.size_z(); ++kz){
+            for(int kx = 0; kx < vol.size_x() ; ++kx){
+                if(vol(kx,ky, kz) > i)
+                    i = vol(kx,ky, kz);
+            }
+
+              im(ky,kz) = i;
+              i = 0.0f;
+
+        }
+
+
+    }
 
     return im;
 }
@@ -53,8 +68,29 @@ image ray_cast(volume const& vol)
     //*************************************//
 
     image im(vol.size_y(),vol.size_z());
-
     im.fill(color(0,1,1));
+
+    float fn;
+
+    float dx = 1.0f/(vol.size_x()-1);
+    color attec ;
+    color somme;
+
+
+    for(int ky = 0; ky < vol.size_y(); ++ky){
+        for(int kz = 0; kz < vol.size_z(); ++kz){
+            somme = color(0.,0.,0.);
+            for(int kx = 0; kx < vol.size_x(); ++kx){
+                fn = vol(kx, ky, kz);
+                attec = tf_attenuation(fn);
+                somme += somme * (1 - attec) * dx + tf_emission(fn) * fn * dx;
+            }
+
+            im(ky,kz) = somme ;
+
+
+        }
+    }
 
     return im;
 }

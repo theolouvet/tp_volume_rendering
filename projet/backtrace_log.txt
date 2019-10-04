@@ -1,0 +1,11 @@
+ASSERT FAILED: [x>=0 && x<Nx() && y>=0 && y<Ny()] with message: (x,y)=(0,50) out of limit [Nx=50 , Ny=50]
+In file [../src/image/template/image_basic.tpp] 
+In function [operator()]
+At line 95 
+
+0             0x40560d ./pgm() [0x40560d]
+1             0x404ed0 ./pgm() [0x404ed0]
+2             0x409f87 ./pgm() [0x409f87]
+3             0x403993 ./pgm() [0x403993]
+4       0x7f093afdff45 __libc_start_main + 245
+5             0x4043af ./pgm() [0x4043af]

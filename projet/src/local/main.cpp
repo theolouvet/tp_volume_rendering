@@ -25,6 +25,8 @@ int main(int argc,char *argv[])
     std::cout<<"run "<<argv[0]<<" with "<<argc-1<<" parameters ... \n"<<std::endl;
 
 
+
+
     try
     {
         //************************//
@@ -32,6 +34,9 @@ int main(int argc,char *argv[])
         //************************//
         volume vol; vol.load("data/head_ct_50.4d");
         vol.normalize_data();
+
+
+
 
 
         //exemple de recuperation de donnees
@@ -43,82 +48,92 @@ int main(int argc,char *argv[])
         //************************//
         //PARTIE 1: SLICES
         //************************//
+        image im(vol.size_x(), vol.size_y());
 
-
-//        //************************//
-//        //export slices
-//        //************************//
-//        image sx = slice_x ( vol , vol.size_x()/2 );
-//        sx.save("output/slice_x.ppm");
-
-//        image sy = slice_y ( vol , vol.size_y()/2 );
-//        sy.save("output/slice_y.ppm");
-
-//        image sz = slice_z ( vol , vol.size_z()/2 );
-//        sz.save("output/slice_z.ppm");
-
-
-//        //export all the slices along the z direction
-//        // comment it to save times when not used
-//        for(int k=0 ; k<vol.size_z() ; ++k)
-//        {
-//            std::cout<<k<<","<<vol.size_z()<<std::endl;
-
-//            image const sz_slice = slice_z(vol,k);
-//            sz_slice.save("output/slice_z_"+get_string(k)+".ppm");
-//        }
-
-
-
-
+        for(int kx = 0; kx < vol.size_x(); ++kx){
+            for(int ky = 0 ; ky < vol.size_y(); ++ky){
+                im(kx,ky) = vol(kx, ky, vol.size_z()/2);
+            }
+        }
+       // im.save("im.ppm");
 
         //************************//
-        //PARTIE 2: ROTATION+MIP
+        //export slices
         //************************//
+        image sx = slice_x ( vol , vol.size_x()/2 );
+        sx.save("output/slice_x.ppm");
 
-//        //number of rotation steps
-//        int const N_rotation=20;
+        image sy = slice_y ( vol , vol.size_y()/2 );
+        sy.save("output/slice_y.ppm");
 
-//        for(int counter=0 ; counter<N_rotation ; ++counter)
-//        {
-//            std::string const number = get_string(counter);
-
-//            std::cout<<"export file "<<counter+1<<" / "<<N_rotation<<std::endl;
-
-//            //Rotation
-//            float const angle = (2.0f*M_PI*counter) / N_rotation + M_PI/2.0f;
-//            volume vol2 = rotated_z(vol,angle);
-
-//            //MIP
-//            image val = mip(vol2);
-
-//            val.save("output/mip_"+number+".ppm");
-//        }
+        image sz = slice_z ( vol , vol.size_z()/2 );
+        sz.save("output/slice_z.ppm");
 
 
+        //export all the slices along the z direction
+        // comment it to save times when not used
+        for(int k=0 ; k<vol.size_z() ; ++k)
+        {
+            std::cout<<k<<","<<vol.size_z()<<std::endl;
 
-        //************************//
-        //PARTIE 3: RAY-CASTING
-        //************************//
+            image const sz_slice = slice_z(vol,k);
+            sz_slice.save("output/slice_z_"+get_string(k)+".ppm");
+        }
 
-//        //export transfert function
-//        export_tranfert_function("output/transfert_function.dat");
+        image tim = mip(vol);
+        tim.save("tim.ppm");
 
-//        for(int counter=0 ; counter<N_rotation ; ++counter)
-//        {
-//            std::string const number=get_string(counter);
 
-//            std::cout<<"export file "<<counter+1<<" / "<<N_rotation<<std::endl;
 
-//            //Rotation
-//            float const angle = (M_PI*2.0f*counter) / N_rotation + M_PI/2.0f;
-//            volume vol2 = rotated_z(vol,angle);
 
-//            //Ray Casting
-//            image val_couleur=ray_cast(vol2);
 
-//            val_couleur.save("output/ray_"+number+".ppm");
-//        }
+//        ************************//
+//        PARTIE 2: ROTATION+MIP
+//        ************************//
+
+        //number of rotation steps
+        int const N_rotation=20;
+
+        for(int counter=0 ; counter<N_rotation ; ++counter)
+        {
+            std::string const number = get_string(counter);
+
+            std::cout<<"export file "<<counter+1<<" / "<<N_rotation<<std::endl;
+
+            //Rotation
+            float const angle = (2.0f*M_PI*counter) / N_rotation + M_PI/2.0f;
+            volume vol2 = rotated_z(vol,angle);
+
+            //MIP
+            image val = mip(vol2);
+
+            val.save("output/mip_"+number+".ppm");
+        }
+
+
+
+//        ************************//
+//        PARTIE 3: RAY-CASTING
+//        ************************//
+
+        //export transfert function
+        export_tranfert_function("output/transfert_function.dat");
+
+        for(int counter=0 ; counter<N_rotation ; ++counter)
+        {
+            std::string const number=get_string(counter);
+
+            std::cout<<"export file "<<counter+1<<" / "<<N_rotation<<std::endl;
+
+            //Rotation
+            float const angle = (M_PI*2.0f*counter) / N_rotation + M_PI/2.0f;
+            volume vol2 = rotated_z(vol,angle);
+
+            //Ray Casting
+            image val_couleur=ray_cast(vol2);
+
+            val_couleur.save("output/ray_"+number+".ppm");
+        }
 
     }
     catch(cpe::exception_cpe const& e)
