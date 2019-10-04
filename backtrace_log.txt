@@ -1,0 +1,11 @@
+Error in volume::load_v4d(data/head_ct_50.4d) : cannot open file 
+
+In file [/fs03/share/users/theo.louvet/home/Documents/tp_volume_rendering/projet/src/volume/volume.cpp] 
+In function [load]
+At line 449 
+
+0             0x405bed cpe::get_backtrace(int) + 61
+1             0x40b26a cpe::volume::load(std::string const&) + 1562
+2             0x405540 main + 176
+3       0x7fd7780a0f45 __libc_start_main + 245
+4             0x405a3f ./pgm() [0x405a3f]
